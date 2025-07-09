@@ -1,8 +1,8 @@
-﻿using MQTTnet;
+﻿using Common;
+using MQTTnet;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
-using TelemetryIngestionService.Models;
 
 // Setup RabbitMQ
 var factory = new ConnectionFactory { HostName = "localhost" };

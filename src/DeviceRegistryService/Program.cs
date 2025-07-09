@@ -1,4 +1,4 @@
-using DeviceRegistryService.Models;
+using Common;
 using DeviceRegistryService.Services;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -41,11 +41,14 @@ services:
 
     data-storage:
         build: ./src/DataStorageService
+        ports:
+            - "5001:80"
         depends_on:
             - postgres
             - rabbitmq
         environment:
-            - PG_CONNECTION=Host=postgres;Database=iotdb;Username=postgres;Password=pass123
+            - ConnectionStrings:Postgres=Host=postgres;Database=iotdb;Username=postgres;Password=pass123
+            - RabbitMQ:Host=rabbitmq
 
     postgres:
         image: timescale/timescaledb:latest-pg16
@@ -57,6 +60,25 @@ services:
             - POSTGRES_PASSWORD=pass123
         volumes:
             - postgres_data:/var/lib/postgresql/data
+
+    data-enhancement:
+        build: ./src/DataEnhancementService
+        depends_on:
+            - rabbitmq
+        environment:
+            - RabbitMQ:Host=rabbitmq
+
+    api-gateway:
+        build: ./src/ApiGateway
+        ports:
+            - "5002:80"
+        depends_on:
+            - device-registry
+            - data-storage
+        environment:
+            - Jwt:Key=supersecretkey1234567890
+            - Jwt:Issuer=IoTApiGateway
+            - Jwt:Audience=IoTUsers
 
 volumes:
     mongodb_data:

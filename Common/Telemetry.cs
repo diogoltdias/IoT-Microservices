@@ -1,4 +1,4 @@
-﻿namespace TelemetryIngestionService.Models;
+﻿namespace Common;
 public class Telemetry
 {
     public string DeviceId { get; set; } = string.Empty;

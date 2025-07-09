@@ -1,4 +1,4 @@
-﻿using DeviceRegistryService.Models;
+﻿using Common;
 using MongoDB.Driver;
 
 namespace DeviceRegistryService.Services;
