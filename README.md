@@ -15,4 +15,4 @@ See [docs/setup.md](docs/setup.md) for setup instructions.
 ## Architecture
 See [docs/architecture.md](docs/architecture.md) for details.
 
-[![Build Status](https://github.com/diogoltdias/IoT-Microservices/actions/workflows/ci.yml/badge)](https://github.com/diogoltdias/IoT-Microservices/actions/workflows/ci.yml)
+[![CI](https://github.com/diogoltdias/IoT-Microservices/actions/workflows/ci.yml/badge.svg)](https://github.com/diogoltdias/IoT-Microservices/actions/workflows/ci.yml)
