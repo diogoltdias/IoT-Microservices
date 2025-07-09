@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+    device-registry:
+        build: ./src/DeviceRegistryService
+        ports:
+            - "5000:80"
+        depends_on:
+            - mongodb
+        environment:
+            - MongoDb:ConnectionString=mongodb://mongodb:27017
+            - MongoDb:DatabaseName=IoTDb
+
+    mongodb:
+        image: mongodb:latest
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodb_data:/data/db
+
+    telemetry-ingestion:
+        build: ./src/TelemetryIngestionService
+        depends_on:
+            - mqtt
+            - rabbitmq
+        environment:
+            - MQTT_HOST=mqtt
+            - RABBITMQ_HOST=rabbitmq
+
+    mqtt:
+        image: eclipse-mosquitto:latest
+        ports:
+            - "1883:1883"
+        volumes:
+            - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+
+    data-storage:
+        build: ./src/DataStorageService
+        depends_on:
+            - postgres
+            - rabbitmq
+        environment:
+            - PG_CONNECTION=Host=postgres;Database=iotdb;Username=postgres;Password=pass123
+
+    postgres:
+        image: timescale/timescaledb:latest-pg16
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_DB=iotdb
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=pass123
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    mongodb_data:
+    postgres_data:
