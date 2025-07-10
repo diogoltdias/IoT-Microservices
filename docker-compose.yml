@@ -1,85 +1,84 @@
 version: '3.8'
 services:
-    device-registry:
-        build: ./src/DeviceRegistryService
-        ports:
-            - "5000:80"
-        depends_on:
-            - mongodb
-        environment:
-            - MongoDb:ConnectionString=mongodb://mongodb:27017
-            - MongoDb:DatabaseName=IoTDb
+  device-registry:
+    image: iot-microservices/deviceregistryservice:${TAG:-latest}
+    ports:
+      - "5000:80"
+    depends_on:
+      - mongodb
+    environment:
+      - MongoDb:ConnectionString=mongodb://mongodb:27017
+      - MongoDb:DatabaseName=IoTDb
 
-    mongodb:
-        image: mongodb:latest
-        ports:
-            - "27017:27017"
-        volumes:
-            - mongodb_data:/data/db
+  telemetry-ingestion:
+    image: iot-microservices/telemetryingestionservice:${TAG:-latest}
+    depends_on:
+      - mqtt
+      - rabbitmq
+    environment:
+      - MQTT_HOST=mqtt
+      - RABBITMQ_HOST=rabbitmq
 
-    telemetry-ingestion:
-        build: ./src/TelemetryIngestionService
-        depends_on:
-            - mqtt
-            - rabbitmq
-        environment:
-            - MQTT_HOST=mqtt
-            - RABBITMQ_HOST=rabbitmq
+  data-storage:
+    image: iot-microservices/datastorageservice:${TAG:-latest}
+    ports:
+      - "5001:80"
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      - ConnectionStrings:Postgres=Host=postgres;Database=iotdb;Username=postgres;Password=pass123
+      - RabbitMQ:Host=rabbitmq
 
-    mqtt:
-        image: eclipse-mosquitto:latest
-        ports:
-            - "1883:1883"
-        volumes:
-            - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  data-enhancement:
+    image: iot-microservices/dataenhancementservice:${TAG:-latest}
+    depends_on:
+      - rabbitmq
+    environment:
+      - RabbitMQ:Host=rabbitmq
 
-    rabbitmq:
-        image: rabbitmq:3-management-alpine
-        ports:
-            - "5672:5672"
-            - "15672:15672"
+  api-gateway:
+    image: iot-microservices/apigateway:${TAG:-latest}
+    ports:
+      - "5002:80"
+    depends_on:
+      - device-registry
+      - data-storage
+    environment:
+      - Jwt:Key=supersecretkey1234567890
+      - Jwt:Issuer=IoTApiGateway
+      - Jwt:Audience=IoTUsers
 
-    data-storage:
-        build: ./src/DataStorageService
-        ports:
-            - "5001:80"
-        depends_on:
-            - postgres
-            - rabbitmq
-        environment:
-            - ConnectionStrings:Postgres=Host=postgres;Database=iotdb;Username=postgres;Password=pass123
-            - RabbitMQ:Host=rabbitmq
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
-    postgres:
-        image: timescale/timescaledb:latest-pg16
-        ports:
-            - "5432:5432"
-        environment:
-            - POSTGRES_DB=iotdb
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=pass123
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
+  mqtt:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
-    data-enhancement:
-        build: ./src/DataEnhancementService
-        depends_on:
-            - rabbitmq
-        environment:
-            - RabbitMQ:Host=rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
-    api-gateway:
-        build: ./src/ApiGateway
-        ports:
-            - "5002:80"
-        depends_on:
-            - device-registry
-            - data-storage
-        environment:
-            - Jwt:Key=supersecretkey1234567890
-            - Jwt:Issuer=IoTApiGateway
-            - Jwt:Audience=IoTUsers
-
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=iotdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 volumes:
-    mongodb_data:
-    postgres_data:
+  mongodb_data:
+  postgres_data:
