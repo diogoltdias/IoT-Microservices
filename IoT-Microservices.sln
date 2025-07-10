@@ -29,15 +29,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7187CCE9-3
 		docs\setup.md = docs\setup.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Common.csproj", "{D4070163-F1DF-4DFD-9579-1C45A25CE864}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStorageService", "src\DataStorageService\DataStorageService.csproj", "{A0731A78-3DEF-446B-AA64-1D2AC9E3AF85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEnhancementService", "src\DataEnhancementService\DataEnhancementService.csproj", "{DF84E6DE-8F1E-4608-A144-6FEA83711407}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{D4070163-F1DF-4DFD-9579-1C45A25CE864}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateTelemetry", "tests\SimulateTelemetry\SimulateTelemetry.csproj", "{050B8B43-F877-436B-ABA7-2C5CBE863BB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "src\ApiGateway\ApiGateway.csproj", "{A3207B02-7B72-4E55-900F-B7CC3A480E12}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateTelemetry", "tests\SimulateTelemetry\SimulateTelemetry.csproj", "{050B8B43-F877-436B-ABA7-2C5CBE863BB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
